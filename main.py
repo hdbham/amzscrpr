@@ -34,7 +34,7 @@ headers = {
    'cookie': 'DSID=AAO-7r4OSkS76zbHUkiOpnI0kk-X19BLDFF53G8gbnd21VZV2iehu-w_2v14cxvRvrkd_NjIdBWX7wUiQ66f-D8kOkTKD1BhLVlqrFAaqDP3LodRK2I0NfrObmhV9HsedGE7-mQeJpwJifSxdchqf524IMh9piBflGqP0Lg0_xjGmLKEQ0F4Na6THgC06VhtUG5infEdqMQ9otlJENe3PmOQTC_UeTH5DnENYwWC8KXs-M4fWmDADmG414V0_X0TfjrYu01nDH2Dcf3TIOFbRDb993g8nOCswLMi92LwjoqhYnFdf1jzgK0'
 }  
 
-queryString = 'dry dog foods'
+queryString = input('enter search paramaters'
 search_query = queryString.replace(' ', '+')
 print("Searching for ")
 base_url = 'https://www.amazon.com/s?k={0}'.format(search_query)
@@ -63,7 +63,6 @@ for i in range(1, 2):
             price2 = result.find('span', {'class': 'a-price-fraction'}).text
             price = float(price1 + price2)
             product_url = 'https://amazon.com' + result.h2.a['href']
-            section = result.find('span', {'class': 'a-section content'}).text
             print(section)
             items.append([product_name, rating, rating_count, price, product_url])
         except AttributeError:
@@ -72,3 +71,5 @@ for i in range(1, 2):
     
 df = pd.DataFrame(items, columns=['product', 'rating', 'rating count', 'price', 'product url'])
 df.to_csv('{0}.csv'.format(search_query), index=False)
+
+#once all pages have been scraped, append file with section = result.find('span', {'class': 'a-section content'}).text
