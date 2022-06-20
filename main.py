@@ -74,7 +74,7 @@ for i in range(1, maxRange):
 sleep(randint(8,20))
     
 df = pd.DataFrame(items, columns=['product_url'])
-df.to_csv('{0}.csv'.format(search_query), index=False
+df.to_csv('inner_{0}.csv'.format(search_query), index=False
           
 '''
 innerItems = []
@@ -101,5 +101,5 @@ for index, row in enumerate(df):
     sleep(randint(1,20))
     
 df = pd.DataFrame(items, columns=['product_name', 'description'])
-df.to_csv('{0}.csv'.format(search_query), index=False)
+df.to_csv('outer_{0}.csv'.format(search_query), index=False)
 '''
