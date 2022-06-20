@@ -5,7 +5,7 @@ from random import randint
 from time import sleep
 from lxml.html import fromstring
 
-print("Finding working proxy")
+print("Please wait - Finding working proxy")
 url = 'https://free-proxy-list.net/anonymous-proxy.html'
 response = requests.get(url)
 parser = fromstring(response.text)
@@ -23,7 +23,7 @@ for i in parser.xpath('//tbody/tr')[:20]:
         pass
 
 proxy = proxies[randint(0, len(proxies)-1)]
-print("Using proxy " + proxy
+print("Sucessful proxy " + proxy
 )
 
 headers = {
@@ -34,20 +34,24 @@ headers = {
    'cookie': 'DSID=AAO-7r4OSkS76zbHUkiOpnI0kk-X19BLDFF53G8gbnd21VZV2iehu-w_2v14cxvRvrkd_NjIdBWX7wUiQ66f-D8kOkTKD1BhLVlqrFAaqDP3LodRK2I0NfrObmhV9HsedGE7-mQeJpwJifSxdchqf524IMh9piBflGqP0Lg0_xjGmLKEQ0F4Na6THgC06VhtUG5infEdqMQ9otlJENe3PmOQTC_UeTH5DnENYwWC8KXs-M4fWmDADmG414V0_X0TfjrYu01nDH2Dcf3TIOFbRDb993g8nOCswLMi92LwjoqhYnFdf1jzgK0'
 }  
 
-queryString = input('enter search paramaters'
+queryString = input('Please input Search Params: ')
 search_query = queryString.replace(' ', '+')
-print("Searching for ")
+print("Searching for " + queryString)
 base_url = 'https://www.amazon.com/s?k={0}'.format(search_query)
 
-items = []
-for i in range(1, 2):
+maxRange = input("How many pages to scrape? ")
+maxRange = int(maxRange)
+
+Outeritems = []
+for i in range(1, maxRange):
     print('Processing {0}...'.format(base_url + '&page={0}'.format(i)))
     response = requests.get(base_url + '&page={0}'.format(i), headers=headers, proxies={"http": proxy, "https": proxy})
+  
     soup = BeautifulSoup(response.content, 'html.parser')
-    print("Scraping")
-    #print(soup)
     results = soup.find_all('div', {'class': 's-result-item', 'data-component-type': 's-search-result'})
+  # print(results)
 
+    #get urls from pages 
     for result in results:
         product_name = result.h2.text
 
@@ -63,13 +67,39 @@ for i in range(1, 2):
             price2 = result.find('span', {'class': 'a-price-fraction'}).text
             price = float(price1 + price2)
             product_url = 'https://amazon.com' + result.h2.a['href']
-            print(section)
-            items.append([product_name, rating, rating_count, price, product_url])
+            
+            Outeritems.append([product_url])
+        except AttributeError:
+            continue
+sleep(randint(8,20))
+    
+df = pd.DataFrame(items, columns=['product_url'])
+df.to_csv('{0}.csv'.format(search_query), index=False
+          
+'''
+innerItems = []
+
+for index, row in enumerate(df):
+    pageUrl = row. # is this the right way to inject url into request.get?
+  
+    response = requests.get(pageUrl, headers=headers, proxies={"http": proxy, "https": proxy})
+  
+    soup = BeautifulSoup(response.content, 'html.parser')
+    results = soup.find_all('div', {'class': 's-result-item', 'data-component-type': 's-search-result'})
+  # print(results)
+  
+    for result in results:
+        product_name = result.h1.text
+        try:
+            description = result.find('span', {'class': 'a-section content'}).text
+        except AttributeError:
+            continue
+        try:
+            innerItems.append([product_name, description])
         except AttributeError:
             continue
     sleep(randint(1,20))
     
-df = pd.DataFrame(items, columns=['product', 'rating', 'rating count', 'price', 'product url'])
+df = pd.DataFrame(items, columns=['product_name', 'description'])
 df.to_csv('{0}.csv'.format(search_query), index=False)
-
-#once all pages have been scraped, append file with section = result.find('span', {'class': 'a-section content'}).text
+'''
